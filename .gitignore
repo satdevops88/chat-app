@@ -8,6 +8,9 @@
 # dependencies
 /node_modules
 
+#package-look.json
+/package-look.json
+
 # IDEs and editors
 /.idea
 .project
