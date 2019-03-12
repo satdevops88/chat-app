@@ -32,6 +32,7 @@ export class ApiService {
 
     public getAll<T>(): Observable<T> {
         this.actionUrl = this.actionUrl + '/getAll';
+        console.log(this.actionUrl);
         return this.http.get<T>(this.actionUrl);
     }
 

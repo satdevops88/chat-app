@@ -2,36 +2,119 @@ import { Component, ViewChild, ElementRef, OnInit, ChangeDetectionStrategy } fro
 import { ChatService } from './chat.service';
 import { Chat } from './chat.model';
 
+import { from } from 'rxjs/observable/from';
+import { groupBy, mergeMap, toArray } from 'rxjs/operators';
+
 @Component({
   selector: 'app-chat',
   templateUrl: './chat.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrls: ['./chat.component.scss'],
   providers: [ChatService]
 })
 export class ChatComponent implements OnInit {
 
   chat: Chat[];
-  activeChatUser: string;
-  activeChatUserImg: string;
+  activeChatUser: string = '';
+  activeChatUserImg: string = '';
+  messageLists: any[];
+  userLists: any = [];
+  messages: any = [];
+  customerId: string;
+
   @ViewChild('messageInput') messageInputRef: ElementRef;
 
-  messages = new Array();
   item: number = 0;
   constructor(private elRef: ElementRef, private chatService: ChatService) {
-    this.chat = chatService.chat2;
-    this.activeChatUser = "Kristopher Candy";
-    this.activeChatUserImg = "assets/img/portrait/small/avatar-s-7.png";
-}
+    console.log('constructor')
+    // this.chat = chatService.chat2;
+    // this.activeChatUser = "Kristopher Candy";
+    // this.activeChatUserImg = "assets/img/portrait/small/img_avatar.png";
+
+  }
 
   ngOnInit() {
+    console.log('ngOnInit');
+    this.onUserList();
     $.getScript('./assets/js/chat.js');
   }
 
+  private onUserList() {
+    this.userLists = [];
+    this.chatService.getAllMessages().subscribe(data => {
+      this.messageLists = data['result'];
+      //getting latest customerId
+      this.customerId = this.messageLists[0].fromnumber;
+
+      const people = this.messageLists;
+      const source = from(people);
+      const result = source.pipe(
+        groupBy(people => people.fromnumber),
+        mergeMap(group => group.pipe(toArray()))
+      );
+      result.subscribe(val => {
+        console.log(val);
+        var unreadnum = 0;
+        val.forEach(element => {
+          if (element.checked == 0) {
+            unreadnum += 1;
+          }
+        });
+        var time = val[0].created_at.split('T')[1];
+        var hours = time.split(':')[0] + ':' + time.split(':')[1];
+        var lastmessage = val[0].content;
+        if (lastmessage.length > 15) {
+          lastmessage = lastmessage.substring(0, 14) + '...';
+        }
+        var userList: any = {};
+        userList.avatar = "assets/img/portrait/small/img_avatar.png";
+        userList.number = val[0].fromnumber;
+        userList.lasttime = hours;
+        userList.lastmessage = lastmessage;
+        userList.unreadnum = unreadnum;
+        this.userLists.push(userList);
+      });
+      console.log(this.userLists);
+
+    })
+  }
   //send button function calls
   onAddMessage() {
+
     if (this.messageInputRef.nativeElement.value != "") {
-      this.messages.push(this.messageInputRef.nativeElement.value);
+      console.log(this.messageInputRef.nativeElement.value);
+      const content = this.messageInputRef.nativeElement.value;
+      this.chatService.sendSMS(this.customerId, content).subscribe(data => {
+        console.log(data);
+        console.log(this.chat);
+        if(this.chat[this.chat.length - 1].avatar == "right"){
+          this.chat[this.chat.length - 1].messages.push(content);
+        } else {
+          const messageInfo:any = {};
+          messageInfo.avatar = "right";
+          messageInfo.chatClass = "chat";
+          messageInfo.imagePath = "assets/img/portrait/small/avatar-s-1.png";
+          messageInfo.messageType = "text";
+          const messagecontent: any = [];
+          messagecontent.push(content);
+          messageInfo.messages = messagecontent;
+          var today = new Date();
+          var year = today.getUTCFullYear();
+          var month = today.getUTCMonth() + 1;
+          var strMonth = month.toString();
+          if (month < 10) strMonth = '0' + strMonth;
+          var day = today.getUTCDate();
+          var strDay = day.toString();
+          if (day < 10) strDay = '0' + day;
+          var hour = today.getUTCHours();
+          var strHour = hour.toString();
+          if (hour < 10) strHour = '0' + hour;
+          var min = today.getUTCMinutes();
+          var strMin = min.toString();
+          if (min < 10) strMin = '0' + min;
+          messageInfo.datetime = year + '-' + strMonth + '-' + strDay + ' ' + strHour + ':' + strMin;
+          this.chat.push(messageInfo);
+        }
+      });
     }
     this.messageInputRef.nativeElement.value = "";
     this.messageInputRef.nativeElement.focus();
@@ -39,10 +122,11 @@ export class ChatComponent implements OnInit {
 
   //chat user list click event function
   SetActive(event, chatId: string) {
+    this.customerId = chatId;
+
     var hElement: HTMLElement = this.elRef.nativeElement;
     //now you can simply get your elements with their class name
     var allAnchors = hElement.getElementsByClassName('list-group-item');
-    console.log(allAnchors);
     //do something with selected elements
     [].forEach.call(allAnchors, function (item: HTMLElement) {
       item.setAttribute('class', 'list-group-item no-border');
@@ -50,44 +134,68 @@ export class ChatComponent implements OnInit {
     //set active class for selected item 
     event.currentTarget.setAttribute('class', 'list-group-item bg-blue-grey bg-lighten-5 border-right-primary border-right-2');
 
-    this.messages = [];
     console.log(chatId);
-    if (chatId === 'chat1') {
-      this.chat = this.chatService.chat1;
-      this.activeChatUser = "Elizabeth Elliott";
-      this.activeChatUserImg = "assets/img/portrait/small/avatar-s-3.png";
-    }
-    else if (chatId === 'chat2') {
-      this.chat = this.chatService.chat2;
-      this.activeChatUser = "Kristopher Candy";
-      this.activeChatUserImg = "assets/img/portrait/small/avatar-s-7.png";
-    }
-    else if (chatId === 'chat3') {
-      this.chat = this.chatService.chat3;
-      this.activeChatUser = "Sarah Woods";
-      this.activeChatUserImg = "assets/img/portrait/small/avatar-s-8.png";
-    }
-    else if (chatId === 'chat4') {
-      this.chat = this.chatService.chat4;
-      this.activeChatUser = "Bruce Reid";
-      this.activeChatUserImg = "assets/img/portrait/small/avatar-s-5.png";
-    }
-    else if (chatId === 'chat5') {
-      this.chat = this.chatService.chat5;
-      this.activeChatUser = "Heather Howell";
-      this.activeChatUserImg = "assets/img/portrait/small/avatar-s-9.png";
-    }
-    else if (chatId === 'chat6') {
-      this.chat = this.chatService.chat6;
-      this.activeChatUser = "Kelly Reyes";
-      this.activeChatUserImg = "assets/img/portrait/small/avatar-s-4.png";
-    }
-    else if (chatId === 'chat7') {
-      this.chat = this.chatService.chat7;
-      this.activeChatUser = "Vincent Nelson";
-      this.activeChatUserImg = "assets/img/portrait/small/avatar-s-14.png";
-    }
+    this.messages = [];
+    this.chatService.getUserMessages(chatId).subscribe(data => {
 
+      console.log(data);
+      const messageArray = data['result'];
+      var messageInfo: any = {};
+      var messagecontent: any = [];
+      var direction = messageArray[0].direction;
+      messageArray.forEach((element: any) => {
+        console.log(element);
+        if (direction != element.direction) {
+          messageInfo.messages = messagecontent;
+          this.messages.push(
+            new Chat(messageInfo.avatar, messageInfo.chatClass, messageInfo.imagePath,
+              messageInfo.datetime, messageInfo.messages, messageInfo.messageType)
+          );
+          messagecontent = [];
+          messageInfo = {};
+          direction = element.direction;
+        }
+        var date = element.created_at.split('T')[0];
+        var time = element.created_at.split('T')[1];
+        messageInfo.datetime = date + ' ' + time.split(':')[0] + ':' + time.split(':')[1];
+        messageInfo.messageType = 'text';
+        if (element.direction == "Outgoing") {
+          messageInfo.avatar = 'right'
+          messageInfo.chatClass = 'chat';
+          messageInfo.imagePath = 'assets/img/portrait/small/avatar-s-1.png';
+        } else {
+          messageInfo.avatar = 'left'
+          messageInfo.chatClass = 'chat chat-left';
+          messageInfo.imagePath = 'assets/img/portrait/small/img_avatar.png';
+        }
+        messagecontent.push(element.content);
+      });
+      messageInfo.messages = messagecontent;
+      console.log(messageInfo.messagecontent);
+      this.messages.push(
+        new Chat(messageInfo.avatar, messageInfo.chatClass, messageInfo.imagePath,
+          messageInfo.datetime, messageInfo.messages, messageInfo.messageType)
+      );
+      console.log(this.messages);
+      this.chat = this.messages;
+      this.activeChatUser = chatId;
+      this.activeChatUserImg = "assets/img/portrait/small/img_avatar.png";
+    })
+  }
+
+  public checkSMS() {
+    console.log(this.customerId);
+    this.chatService.checkSMS(this.customerId).subscribe(data => {
+      console.log(data);
+      console.log(this.userLists);
+      this.userLists.forEach((element: any, index: number) => {
+        if (element.number == this.customerId) {
+          this.userLists[index].unreadnum = 0;
+        }
+      });
+    });
+
+    // this.onUserList();
   }
 
 }
