@@ -4,8 +4,10 @@ $(document).ready( function(){
     *           Customizer          *
     ********************************/
     var body = $('body'),
-    default_bg_color = $('.app-sidebar').attr('data-background-color'),
-    default_bg_image = $('.app-sidebar').attr('data-image');
+    // default_bg_color = $('.app-sidebar').attr('data-background-color'),
+    // default_bg_image = $('.app-sidebar').attr('data-image');
+    default_bg_color = 'king-yna',
+    default_bg_image = 'assets/img/sidebar-bg/06.jpg';
 
     $('.cz-bg-color span[data-bg-color="'+default_bg_color+'"]').addClass('selected');
     $('.cz-bg-image img[src$="'+default_bg_image+'"]').addClass('selected');
@@ -46,7 +48,7 @@ $(document).ready( function(){
     $('.cz-bg-image img').on('click',function(){
         var $this = $(this),
         src = $this.attr('src');
-
+        console.log(src);
         $('.sidebar-background').css('background-image', 'url(' + src + ')');
         $this.closest('.cz-bg-image').find('.selected').removeClass('selected');
         $this.addClass('selected');

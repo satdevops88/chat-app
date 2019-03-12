@@ -13,13 +13,13 @@
                             <form novalidate="" (ngSubmit)="onSubmit()" #f="ngForm">
                                 <div class="form-group">
                                     <div class="col-md-12">
-                                        <input type="email" class="form-control" name="inputEmail" id="inputEmail" placeholder="Email" ngModel required email>
+                                        <input type="text" class="form-control" name="inputEmail" id="inputEmail" placeholder="AgentName" [(ngModel)]="agentname"  required>
                                     </div>
                                 </div>
 
                                 <div class="form-group">
                                     <div class="col-md-12">
-                                        <input type="password" class="form-control" name="inputPass" id="inputPass" placeholder="Password" ngModel required>
+                                        <input type="password" class="form-control" name="inputPass" id="inputPass" placeholder="Password" [(ngModel)]="password"  required>
                                     </div>
                                 </div>
 

@@ -1,0 +1,45 @@
+<section id="customers table">
+    <div class="row text-left">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-header row">
+                    <div class="col-md-9 mt-3 mb-1">
+                        <h4 class="card-title">My Campaigns</h4>
+                    </div>
+                    <div class="col-3 mt-3 mb-1" style="text-align:center;">
+                        <button class="btn btn-raised btn-danger" (click)="onAddCustomer()" translate>Add Customer</button>
+                    </div>
+            
+                </div>
+                <div class="card-body">
+                    <div class="card-block">
+                        <table class="table table-responsive-md text-center">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Name</th>
+                                    <th>Phone Number</th>
+                                    <th>Agent Name</th>
+                                    <th>Remove</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let customer of myCustomers; let i = index">
+                                    <td style="vertical-align: middle;">{{i+1}}</td>
+                                    <td style="vertical-align: middle;">{{customer.name}}</td>
+                                    <td style="vertical-align: middle;">{{customer.phonenum}}</td>
+                                    <td style="vertical-align: middle;">{{customer.agentName}}</td>
+                                    <td style="vertical-align: middle;">
+                                        <a class="info p-0" data-original-title="" title="" (click)="onRemove(customer.id)">
+                                            <i class="ft-trash-2 font-medium-3 mr-2"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

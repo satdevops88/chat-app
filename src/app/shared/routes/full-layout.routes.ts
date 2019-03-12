@@ -6,5 +6,13 @@ export const Full_ROUTES: Routes = [
   {
     path: 'chat',
     loadChildren: './chat/chat.module#ChatModule'
+  },
+  {
+    path: 'add-customer',
+    loadChildren: './add-customer/add-customer.module#AddCustomerModule'
+  },
+  {
+    path: 'customers',
+    loadChildren: './customers/customers.module#CustomersModule'
   }
 ];

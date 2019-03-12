@@ -19,10 +19,10 @@ export class ChatComponent implements OnInit {
   messages = new Array();
   item: number = 0;
   constructor(private elRef: ElementRef, private chatService: ChatService) {
-    this.chat = chatService.chat1;
-    this.activeChatUser = "Elizabeth Elliott";
-    this.activeChatUserImg = "assets/img/portrait/small/avatar-s-3.png";
-  }
+    this.chat = chatService.chat2;
+    this.activeChatUser = "Kristopher Candy";
+    this.activeChatUserImg = "assets/img/portrait/small/avatar-s-7.png";
+}
 
   ngOnInit() {
     $.getScript('./assets/js/chat.js');
@@ -42,6 +42,7 @@ export class ChatComponent implements OnInit {
     var hElement: HTMLElement = this.elRef.nativeElement;
     //now you can simply get your elements with their class name
     var allAnchors = hElement.getElementsByClassName('list-group-item');
+    console.log(allAnchors);
     //do something with selected elements
     [].forEach.call(allAnchors, function (item: HTMLElement) {
       item.setAttribute('class', 'list-group-item no-border');
@@ -50,7 +51,7 @@ export class ChatComponent implements OnInit {
     event.currentTarget.setAttribute('class', 'list-group-item bg-blue-grey bg-lighten-5 border-right-primary border-right-2');
 
     this.messages = [];
-
+    console.log(chatId);
     if (chatId === 'chat1') {
       this.chat = this.chatService.chat1;
       this.activeChatUser = "Elizabeth Elliott";

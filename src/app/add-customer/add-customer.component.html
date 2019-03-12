@@ -1,0 +1,48 @@
+<!-- Add Customer section start -->
+<section id="add-customer">
+    <div class="row text-left">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title" id="basic-layout-form" translate>Add Customer</h4>
+                    <!-- <p class="mb-0">This is the most basic and default form having form sections. To add form section use <code>.form-section</code> class with any heading tags. This form has the buttons on the bottom left corner which is the default position.</p> -->
+                </div>
+                <div class="card-body">
+                    <div class="px-3">
+                        <form class="form">
+                            <div class="form-body">
+                                <h4 class="form-section"><i class="ft-file-text"></i>Customer Information</h4>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="oname" translate>Customer Name</label>
+                                            <input type="text" class="form-control" name="oname" id="oname" placeholder="Customer Name"
+                                                [(ngModel)]="oname">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="pnumber" translate>Phone Number</label>
+                                            <input type="text" id="pnumber" class="form-control" name="pnumber"
+                                                placeholder="Phone Number" [(ngModel)]="PhoneNumber">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-actions right">
+                                <button type="button" class="btn btn-raised btn-raised btn-primary" (click)="onRegister()">
+                                    <i class="fa fa-check-square-o"></i> {{'Register' | translate}}
+                                </button>
+                                <button type="button" class="btn btn-raised btn-raised btn-warning mr-1" (click)="onCancel()">
+                                    <i class="ft-x"></i> {{'Cancel' | translate}}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>
+<!-- Add Vehicle section end -->

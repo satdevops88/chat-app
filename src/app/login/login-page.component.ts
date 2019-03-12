@@ -1,6 +1,8 @@
 import { Component, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Router, ActivatedRoute } from "@angular/router";
+import { AuthService } from 'app/shared/auth/auth.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
     selector: 'app-login-page',
@@ -12,13 +14,25 @@ export class LoginPageComponent {
 
     @ViewChild('f') loginForm: NgForm;
 
+    agentname = '';
+    password = '';
+
     constructor(private router: Router,
-        private route: ActivatedRoute) { }
+        private route: ActivatedRoute,
+        private authService: AuthService,
+        private toastr: ToastrService) { }
 
     // On submit button click    
     onSubmit() {
-        this.loginForm.reset();
-        this.router.navigate(['chat']);
+        this.authService.signinUser(this.agentname, this.password).subscribe(data => {
+            this.toastr.success('Success')
+            console.log(data)
+            this.router.navigate(['customers']);
+        }, (error) => {
+            console.log(error);
+            this.toastr.error(error['error'].message);
+            this.loginForm.reset();
+        });
     }
     // On Forgot password link click
     onForgotPassword() {
