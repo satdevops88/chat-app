@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://chat.offermentor.com/'
+  apiUrl: 'http://chat.offermentor.com:8080/'
 };
