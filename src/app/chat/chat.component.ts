@@ -34,10 +34,14 @@ export class ChatComponent implements OnInit {
     this.onUserList();
     this.chatService.getMessages().subscribe(data => {
       console.log(data);
+      console.log(this.customerId);
       console.log(this.userLists);
       console.log(this.chat);
       /**For updating userLists */
       this.onUserListUpdate(data.number, data.content, "inComing");
+      if (this.customerId == data.number) {
+        this.onChatListUpdate(data.content, "inComing");
+      }
       /**For updating chatLists */
       // this.onChatListUpdate(data.content, "inComing");
       // this.activeChatUser = data.number;
@@ -49,7 +53,9 @@ export class ChatComponent implements OnInit {
   scrollToBottom(): void {
     try {
       this.myScrollContainer.nativeElement.scrollTop = this.myScrollContainer.nativeElement.scrollHeight;
-    } catch (err) { }
+    } catch (err) {
+      console.log(err);
+    }
   }
 
   private onUserListUpdate(customerId: string, content: string, direction: string) {
@@ -80,7 +86,7 @@ export class ChatComponent implements OnInit {
         const messagecontent: any = [];
         messagecontent.push(content);
         messageInfo.messages = messagecontent;
-        messageInfo.datetime = this.getCurrentDateTime().date + ' ' + this.getCurrentDateTime().time;
+        messageInfo.time = this.getCurrentDateTime().date + ' ' + this.getCurrentDateTime().time;
         this.chat.push(messageInfo);
       }
     } else {
@@ -95,12 +101,11 @@ export class ChatComponent implements OnInit {
         const messagecontent: any = [];
         messagecontent.push(content);
         messageInfo.messages = messagecontent;
-        messageInfo.datetime = this.getCurrentDateTime().date + ' ' + this.getCurrentDateTime().time;
+        messageInfo.time = this.getCurrentDateTime().date + ' ' + this.getCurrentDateTime().time;
         this.chat.push(messageInfo);
       }
-
     }
-
+    console.log(this.chat);
   }
 
   private onUserList() {
@@ -139,6 +144,7 @@ export class ChatComponent implements OnInit {
         userList.unreadnum = unreadnum;
         this.userLists.push(userList);
       });
+      this.scrollToBottom();
     })
   }
 
