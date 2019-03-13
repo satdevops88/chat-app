@@ -22,11 +22,13 @@ import { ApiService } from './shared/api/api.service';
 
 import * as $ from 'jquery';
 
+import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
+const config: SocketIoConfig = { url: 'http://chat.offermentor.com:3000', options: {} };
 
 
 export function createTranslateLoader(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
-  }
+}
 
 @NgModule({
     declarations: [
@@ -47,11 +49,12 @@ export function createTranslateLoader(http: HttpClient) {
                 provide: TranslateLoader,
                 useFactory: (createTranslateLoader),
                 deps: [HttpClient]
-              }
+            }
         }),
         AgmCoreModule.forRoot({
             apiKey: 'AIzaSyBr5_picK8YJK7fFR2CPzTVMj6GG1TtRGo'
-        })
+        }),
+        SocketIoModule.forRoot(config)
     ],
     providers: [
         AuthService,

@@ -4,6 +4,8 @@ import { HttpClient } from '@angular/common/http';
 
 import { environment } from 'environments/environment';
 import { Observable } from 'rxjs';
+import { Socket } from 'ngx-socket-io';
+import { ObserveOnOperator } from 'rxjs/internal/operators/observeOn';
 
 
 @Injectable()
@@ -15,7 +17,7 @@ export class ChatService {
     private actionUrl: string;
     userLists: any = [];
 
-    constructor(private http: HttpClient) {
+    constructor(private http: HttpClient, private socket: Socket) {
         this.apiBaseUrl = environment.apiUrl;
         this.apiChatUrl = environment.apiUrl + 'message/';
     }
@@ -41,6 +43,15 @@ export class ChatService {
         this.actionUrl = this.apiBaseUrl + 'sms';
         return this.http.post<T>(this.actionUrl, {"recipient": customerId, "message": content});
     }
+
+    public getMessages = () => {
+        return Observable.create((observer) => {
+            this.socket.on('new_SMS', (message) => {
+                observer.next(message);
+            });
+        });
+    }
+
 
     // public chat1: Chat[] = [
     //     new Chat(

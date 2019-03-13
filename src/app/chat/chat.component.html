@@ -51,7 +51,7 @@
       </div>
     </div>
   </div>
-  <section class="chat-app-window" (click)="checkSMS();">
+  <section class="chat-app-window" (click)="checkSMS();" #scrollMe>
     <div class="badge badge-dark mb-1" *ngIf="activeChatUser != ''">Chat History</div>
     <div class="chats">
       <div class="chats">
@@ -81,7 +81,7 @@
       </div>
     </div>
   </section>
-  <section class="chat-app-form bg-blue-grey bg-lighten-5">
+  <section class="chat-app-form bg-blue-grey bg-lighten-5" (click)="checkSMS();">
     <form class="chat-app-input row" *ngIf="activeChatUser != ''">
       <fieldset class="form-group position-relative has-icon-left col-xl-10 col-lg-8 col-8 m-0 mb-1">
         <div class="form-control-position">

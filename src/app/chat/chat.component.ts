@@ -1,4 +1,4 @@
-import { Component, ViewChild, ElementRef, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ViewChild, ElementRef, OnInit, ChangeDetectionStrategy, AfterViewChecked } from '@angular/core';
 import { ChatService } from './chat.service';
 import { Chat } from './chat.model';
 
@@ -22,20 +22,85 @@ export class ChatComponent implements OnInit {
   customerId: string;
 
   @ViewChild('messageInput') messageInputRef: ElementRef;
+  @ViewChild('scrollMe') myScrollContainer: ElementRef;
 
   item: number = 0;
   constructor(private elRef: ElementRef, private chatService: ChatService) {
     console.log('constructor')
-    // this.chat = chatService.chat2;
-    // this.activeChatUser = "Kristopher Candy";
-    // this.activeChatUserImg = "assets/img/portrait/small/img_avatar.png";
-
   }
 
   ngOnInit() {
     console.log('ngOnInit');
     this.onUserList();
+    this.chatService.getMessages().subscribe(data => {
+      console.log(data);
+      console.log(this.userLists);
+      console.log(this.chat);
+      /**For updating userLists */
+      this.onUserListUpdate(data.number, data.content, "inComing");
+      /**For updating chatLists */
+      // this.onChatListUpdate(data.content, "inComing");
+      // this.activeChatUser = data.number;
+      // this.activeChatUserImg = "assets/img/portrait/small/img_avatar.png";
+    });
     $.getScript('./assets/js/chat.js');
+  }
+
+  scrollToBottom(): void {
+    try {
+      this.myScrollContainer.nativeElement.scrollTop = this.myScrollContainer.nativeElement.scrollHeight;
+    } catch (err) { }
+  }
+
+  private onUserListUpdate(customerId: string, content: string, direction: string) {
+    this.userLists.forEach((element: any, index: number) => {
+      if (element.number == customerId) {
+        var lastmessage = content;
+        if (lastmessage.length > 15) {
+          lastmessage = lastmessage.substring(0, 14) + '...';
+        }
+        this.userLists[index].lastmessage = lastmessage;
+        this.userLists[index].lasttime = this.getCurrentDateTime().time;
+        if (direction == "inComing") this.userLists[index].unreadnum = this.userLists[index].unreadnum + 1;
+        [this.userLists[0], this.userLists[index]] = [this.userLists[index], this.userLists[0]];
+      }
+    });
+  }
+
+  private onChatListUpdate(content: string, direction: string) {
+    if (direction == "outGoing") {
+      if (this.chat[this.chat.length - 1].avatar == "right") {
+        this.chat[this.chat.length - 1].messages.push(content);
+      } else {
+        const messageInfo: any = {};
+        messageInfo.avatar = "right";
+        messageInfo.chatClass = "chat";
+        messageInfo.imagePath = "assets/img/portrait/small/avatar-s-1.png";
+        messageInfo.messageType = "text";
+        const messagecontent: any = [];
+        messagecontent.push(content);
+        messageInfo.messages = messagecontent;
+        messageInfo.datetime = this.getCurrentDateTime().date + ' ' + this.getCurrentDateTime().time;
+        this.chat.push(messageInfo);
+      }
+    } else {
+      if (this.chat[this.chat.length - 1].avatar == "left") {
+        this.chat[this.chat.length - 1].messages.push(content);
+      } else {
+        const messageInfo: any = {};
+        messageInfo.avatar = "left";
+        messageInfo.chatClass = "chat chat-left";
+        messageInfo.imagePath = "assets/img/portrait/small/img_avatar.png";
+        messageInfo.messageType = "text";
+        const messagecontent: any = [];
+        messagecontent.push(content);
+        messageInfo.messages = messagecontent;
+        messageInfo.datetime = this.getCurrentDateTime().date + ' ' + this.getCurrentDateTime().time;
+        this.chat.push(messageInfo);
+      }
+
+    }
+
   }
 
   private onUserList() {
@@ -43,7 +108,9 @@ export class ChatComponent implements OnInit {
     this.chatService.getAllMessages().subscribe(data => {
       this.messageLists = data['result'];
       //getting latest customerId
+      /**This onUserList is executed only one time when page reload */
       this.customerId = this.messageLists[0].fromnumber;
+      this.onChatList(this.customerId);
 
       const people = this.messageLists;
       const source = from(people);
@@ -52,7 +119,6 @@ export class ChatComponent implements OnInit {
         mergeMap(group => group.pipe(toArray()))
       );
       result.subscribe(val => {
-        console.log(val);
         var unreadnum = 0;
         val.forEach(element => {
           if (element.checked == 0) {
@@ -73,78 +139,18 @@ export class ChatComponent implements OnInit {
         userList.unreadnum = unreadnum;
         this.userLists.push(userList);
       });
-      console.log(this.userLists);
-
     })
   }
-  //send button function calls
-  onAddMessage() {
 
-    if (this.messageInputRef.nativeElement.value != "") {
-      console.log(this.messageInputRef.nativeElement.value);
-      const content = this.messageInputRef.nativeElement.value;
-      this.chatService.sendSMS(this.customerId, content).subscribe(data => {
-        console.log(data);
-        console.log(this.chat);
-        if(this.chat[this.chat.length - 1].avatar == "right"){
-          this.chat[this.chat.length - 1].messages.push(content);
-        } else {
-          const messageInfo:any = {};
-          messageInfo.avatar = "right";
-          messageInfo.chatClass = "chat";
-          messageInfo.imagePath = "assets/img/portrait/small/avatar-s-1.png";
-          messageInfo.messageType = "text";
-          const messagecontent: any = [];
-          messagecontent.push(content);
-          messageInfo.messages = messagecontent;
-          var today = new Date();
-          var year = today.getUTCFullYear();
-          var month = today.getUTCMonth() + 1;
-          var strMonth = month.toString();
-          if (month < 10) strMonth = '0' + strMonth;
-          var day = today.getUTCDate();
-          var strDay = day.toString();
-          if (day < 10) strDay = '0' + day;
-          var hour = today.getUTCHours();
-          var strHour = hour.toString();
-          if (hour < 10) strHour = '0' + hour;
-          var min = today.getUTCMinutes();
-          var strMin = min.toString();
-          if (min < 10) strMin = '0' + min;
-          messageInfo.datetime = year + '-' + strMonth + '-' + strDay + ' ' + strHour + ':' + strMin;
-          this.chat.push(messageInfo);
-        }
-      });
-    }
-    this.messageInputRef.nativeElement.value = "";
-    this.messageInputRef.nativeElement.focus();
-  }
-
-  //chat user list click event function
-  SetActive(event, chatId: string) {
-    this.customerId = chatId;
-
-    var hElement: HTMLElement = this.elRef.nativeElement;
-    //now you can simply get your elements with their class name
-    var allAnchors = hElement.getElementsByClassName('list-group-item');
-    //do something with selected elements
-    [].forEach.call(allAnchors, function (item: HTMLElement) {
-      item.setAttribute('class', 'list-group-item no-border');
-    });
-    //set active class for selected item 
-    event.currentTarget.setAttribute('class', 'list-group-item bg-blue-grey bg-lighten-5 border-right-primary border-right-2');
-
-    console.log(chatId);
+  private onChatList(chatId: string) {
     this.messages = [];
     this.chatService.getUserMessages(chatId).subscribe(data => {
 
-      console.log(data);
       const messageArray = data['result'];
       var messageInfo: any = {};
       var messagecontent: any = [];
       var direction = messageArray[0].direction;
       messageArray.forEach((element: any) => {
-        console.log(element);
         if (direction != element.direction) {
           messageInfo.messages = messagecontent;
           this.messages.push(
@@ -171,23 +177,69 @@ export class ChatComponent implements OnInit {
         messagecontent.push(element.content);
       });
       messageInfo.messages = messagecontent;
-      console.log(messageInfo.messagecontent);
       this.messages.push(
         new Chat(messageInfo.avatar, messageInfo.chatClass, messageInfo.imagePath,
           messageInfo.datetime, messageInfo.messages, messageInfo.messageType)
       );
-      console.log(this.messages);
       this.chat = this.messages;
       this.activeChatUser = chatId;
       this.activeChatUserImg = "assets/img/portrait/small/img_avatar.png";
+      this.scrollToBottom();
     })
+  }
+  public getCurrentDateTime() {
+    var today = new Date();
+    var year = today.getUTCFullYear();
+    var month = today.getUTCMonth() + 1;
+    var strMonth = month.toString();
+    if (month < 10) strMonth = '0' + strMonth;
+    var day = today.getUTCDate();
+    var strDay = day.toString();
+    if (day < 10) strDay = '0' + day;
+    var hour = today.getUTCHours();
+    var strHour = hour.toString();
+    if (hour < 10) strHour = '0' + hour;
+    var min = today.getUTCMinutes();
+    var strMin = min.toString();
+    if (min < 10) strMin = '0' + min;
+    var date = year + "-" + strMonth + "-" + strDay;
+    var time = strHour + ":" + strMin;
+    return { "date": date, "time": time };
+  }
+  //send button function calls
+  onAddMessage() {
+    if (this.messageInputRef.nativeElement.value != "") {
+      const content = this.messageInputRef.nativeElement.value;
+      this.chatService.sendSMS(this.customerId, content).subscribe(data => {
+        /**For updating chatList */
+        this.onChatListUpdate(content, "outGoing");
+        /**For updating UserList */
+        this.onUserListUpdate(this.customerId, content, "outGoing");
+        this.scrollToBottom();
+      });
+    }
+    this.messageInputRef.nativeElement.value = "";
+    this.messageInputRef.nativeElement.focus();
+  }
+
+  //chat user list click event function
+  SetActive(event, chatId: string) {
+    this.customerId = chatId;
+
+    var hElement: HTMLElement = this.elRef.nativeElement;
+    //now you can simply get your elements with their class name
+    var allAnchors = hElement.getElementsByClassName('list-group-item');
+    //do something with selected elements
+    [].forEach.call(allAnchors, function (item: HTMLElement) {
+      item.setAttribute('class', 'list-group-item no-border');
+    });
+    //set active class for selected item 
+    event.currentTarget.setAttribute('class', 'list-group-item bg-blue-grey bg-lighten-5 border-right-primary border-right-2');
+    this.onChatList(chatId);
   }
 
   public checkSMS() {
-    console.log(this.customerId);
     this.chatService.checkSMS(this.customerId).subscribe(data => {
-      console.log(data);
-      console.log(this.userLists);
       this.userLists.forEach((element: any, index: number) => {
         if (element.number == this.customerId) {
           this.userLists[index].unreadnum = 0;
