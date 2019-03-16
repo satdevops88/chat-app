@@ -13,6 +13,9 @@ import { groupBy, mergeMap, toArray } from 'rxjs/operators';
 })
 export class ChatComponent implements OnInit {
 
+  agentId: string;
+  agentName: string;
+
   chat: Chat[];
   activeChatUser: string = '';
   activeChatUserImg: string = '';
@@ -26,7 +29,9 @@ export class ChatComponent implements OnInit {
 
   item: number = 0;
   constructor(private elRef: ElementRef, private chatService: ChatService) {
-    console.log('constructor')
+    console.log('constructor');
+    this.agentId = localStorage.getItem('agentId');
+    this.agentName = localStorage.getItem('agentName');
   }
 
   ngOnInit() {
@@ -110,7 +115,7 @@ export class ChatComponent implements OnInit {
 
   private onUserList() {
     this.userLists = [];
-    this.chatService.getAllMessages().subscribe(data => {
+    this.chatService.getAllMessages(this.agentId).subscribe(data => {
       this.messageLists = data['result'];
       //getting latest customerId
       /**This onUserList is executed only one time when page reload */

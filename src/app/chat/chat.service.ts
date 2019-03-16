@@ -22,8 +22,8 @@ export class ChatService {
         this.apiChatUrl = environment.apiUrl + 'message/';
     }
 
-    public getAllMessages<T>(): Observable<T> {
-        this.actionUrl = this.apiChatUrl + 'getAllMessages';
+    public getAllMessages<T>(agnetId: string): Observable<T> {
+        this.actionUrl = this.apiChatUrl + 'getAllMessages/' + agnetId;
         console.log(this.actionUrl);
         return this.http.get<T>(this.actionUrl);
     }
