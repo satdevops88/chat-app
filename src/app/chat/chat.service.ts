@@ -47,6 +47,7 @@ export class ChatService {
     public getMessages = () => {
         return Observable.create((observer) => {
             this.socket.on('new_SMS', (message) => {
+                console.log('new_SMS in socket.io')
                 observer.next(message);
             });
         });

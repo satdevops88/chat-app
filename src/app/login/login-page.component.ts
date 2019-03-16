@@ -27,6 +27,7 @@ export class LoginPageComponent {
         this.authService.signinUser(this.agentname, this.password).subscribe(data => {
             this.toastr.success('Success')
             console.log(data)
+            localStorage.setItem("agentId", data['agentId']);
             this.router.navigate(['customers']);
         }, (error) => {
             console.log(error);

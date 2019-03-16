@@ -26,7 +26,7 @@ export class CustomersComponent implements OnInit {
      * @description Default constructor.
      */
     constructor(private apiService: ApiService, private router: Router, private authService: AuthService) {
-        this.apiService.setService('customer/');
+        this.apiService.setService('customer');
     }
 
     ngOnInit() {
@@ -39,7 +39,7 @@ export class CustomersComponent implements OnInit {
             .getAll<any[]>()
             .subscribe((data: any[]) => {
                 this.customers = data['result'];
-                this.apiService.setService('agent/');
+                this.apiService.setService('agent');
                 this.apiService.getAll<any[]>().subscribe((data1: any[]) => {
                     this.agents = data1['result'];
                     this.customers.forEach((elementCustomer: any) => {
