@@ -28,6 +28,7 @@ export class LoginPageComponent {
             this.toastr.success('Success')
             console.log(data)
             localStorage.setItem("agentId", data['agentId']);
+            localStorage.setItem("agentName", data['agentName']);
             this.router.navigate(['customers']);
         }, (error) => {
             console.log(error);

@@ -39,25 +39,18 @@ export class CustomersComponent implements OnInit {
             .getAll<any[]>()
             .subscribe((data: any[]) => {
                 this.customers = data['result'];
-                this.apiService.setService('agent');
-                this.apiService.getAll<any[]>().subscribe((data1: any[]) => {
-                    this.agents = data1['result'];
-                    this.customers.forEach((elementCustomer: any) => {
+                var agentId = localStorage.getItem('agentId');
+                var agentName = localStorage.getItem('agentName');
+                this.customers.forEach((elementCustomer: any) => {
+                    if (elementCustomer.agentid == agentId) {
                         var customerInfo: any = {};
                         customerInfo.id = elementCustomer.customerid;
                         customerInfo.name = elementCustomer.name;
                         customerInfo.phonenum = elementCustomer.phonenum;
-                        this.agents.forEach((elementAgent: any) => {
-                            if(elementCustomer.agentid == elementAgent.agentid){
-                                customerInfo.agentName = elementAgent.name;
-                            } else {
-                                customerInfo.agentName = '';
-                            }
-                        });
+                        customerInfo.agentName = agentName;
                         this.myCustomers.push(customerInfo);
-                    });
-    
-                })
+                    }
+                });
                 console.log(this.myCustomers);
             },
                 error => () => {
@@ -68,7 +61,7 @@ export class CustomersComponent implements OnInit {
                 });
     }
 
-    onAddCustomer(){
+    onAddCustomer() {
         this.router.navigate(['add-customer'])
     }
 

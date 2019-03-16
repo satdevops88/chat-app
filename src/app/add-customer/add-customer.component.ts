@@ -34,7 +34,7 @@ export class AddCustomerComponent {
   onRegister() {
     this.customerInfo.name = this.oname;
     this.customerInfo.number = this.PhoneNumber;
-    this.customerInfo.agentid = 1;
+    this.customerInfo.agentid = localStorage.getItem('agentId');
     this.apiService.setService('customer');
     this.apiService.add(this.customerInfo).subscribe(data => {
       console.log(data);
