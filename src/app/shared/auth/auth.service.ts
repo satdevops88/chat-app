@@ -29,6 +29,11 @@ export class AuthService {
 
   isAuthenticated() {
     // here you can check if user is authenticated or not through his token 
-    return true;
+    if (localStorage.getItem('agentId')) {
+      return true;
+    } else {
+      this.router.navigate(['/login']);
+      return false;
+    }
   }
 }

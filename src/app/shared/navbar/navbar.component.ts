@@ -26,6 +26,9 @@ export class NavbarComponent {
     }
 
     logout() {
+        console.log("logout");
+        localStorage.removeItem('agentId');
+        localStorage.removeItem('agentName');
         this.router.navigate(['login']);
     }
 
