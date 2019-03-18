@@ -155,7 +155,8 @@ export class ChatComponent implements OnInit {
 
   private onChatList(chatId: string) {
     this.messages = [];
-    this.chatService.getUserMessages(chatId).subscribe(data => {
+    console.log('this.agentId => ' + this.agentId);
+    this.chatService.getUserMessages(chatId, this.agentId).subscribe(data => {
 
       const messageArray = data['result'];
       var messageInfo: any = {};
@@ -221,7 +222,7 @@ export class ChatComponent implements OnInit {
   onAddMessage() {
     if (this.messageInputRef.nativeElement.value != "") {
       const content = this.messageInputRef.nativeElement.value;
-      this.chatService.sendSMS(this.customerId, content).subscribe(data => {
+      this.chatService.sendSMS(this.customerId, content, this.agentId).subscribe(data => {
         /**For updating chatList */
         this.onChatListUpdate(content, "outGoing");
         /**For updating UserList */
@@ -250,7 +251,7 @@ export class ChatComponent implements OnInit {
   }
 
   public checkSMS() {
-    this.chatService.checkSMS(this.customerId).subscribe(data => {
+    this.chatService.checkSMS(this.customerId, this.agentId).subscribe(data => {
       this.userLists.forEach((element: any, index: number) => {
         if (element.number == this.customerId) {
           this.userLists[index].unreadnum = 0;

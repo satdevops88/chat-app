@@ -28,20 +28,20 @@ export class ChatService {
         return this.http.get<T>(this.actionUrl);
     }
 
-    public getUserMessages<T>(customerId: string): Observable<T> {
+    public getUserMessages<T>(customerId: string, agentId: string): Observable<T> {
         this.actionUrl = this.apiChatUrl + 'getUserMessages/';
         console.log(this.actionUrl);
-        return this.http.get<T>(this.actionUrl + customerId);
+        return this.http.get<T>(this.actionUrl + customerId + '/' + agentId);
     }
 
-    public checkSMS<T>(customerId: string): Observable<T> {
+    public checkSMS<T>(customerId: string, agentId: string): Observable<T> {
         this.actionUrl = this.apiChatUrl + 'checkSMS/';
-        return this.http.post<T>(this.actionUrl + customerId, {"check": 1});
+        return this.http.post<T>(this.actionUrl + customerId + '/' + agentId, {"check": 1});
     }
 
-    public sendSMS<T>(customerId: string, content: string): Observable<T> {
+    public sendSMS<T>(customerId: string, content: string, agentId: string): Observable<T> {
         this.actionUrl = this.apiBaseUrl + 'sms';
-        return this.http.post<T>(this.actionUrl, {"recipient": customerId, "message": content});
+        return this.http.post<T>(this.actionUrl, {"recipient": customerId, "message": content, "agentId": agentId});
     }
 
     public getMessages = () => {
