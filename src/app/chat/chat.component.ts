@@ -43,9 +43,11 @@ export class ChatComponent implements OnInit {
       console.log(this.userLists);
       console.log(this.chat);
       /**For updating userLists */
-      this.onUserListUpdate(data.number, data.content, "inComing");
-      if (this.customerId == data.number) {
-        this.onChatListUpdate(data.content, "inComing");
+      if (data.agentId == this.agentId) {
+        this.onUserListUpdate(data.number, data.content, "inComing");
+        if (this.customerId == data.number) {
+          this.onChatListUpdate(data.content, "inComing");
+        }
       }
       /**For updating chatLists */
       // this.onChatListUpdate(data.content, "inComing");
