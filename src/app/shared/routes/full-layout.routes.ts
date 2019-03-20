@@ -8,6 +8,10 @@ export const Full_ROUTES: Routes = [
     loadChildren: './chat/chat.module#ChatModule'
   },
   {
+    path: 'video',
+    loadChildren: './video/video.module#VideoModule'
+  },
+  {
     path: 'add-customer',
     loadChildren: './add-customer/add-customer.module#AddCustomerModule'
   },

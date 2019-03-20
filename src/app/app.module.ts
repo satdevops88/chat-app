@@ -19,6 +19,7 @@ import { FullLayoutComponent } from "./layouts/full/full-layout.component";
 import { AuthService } from './shared/auth/auth.service';
 import { AuthGuard } from './shared/auth/auth-guard.service';
 import { ApiService } from './shared/api/api.service';
+import { VideoService } from './video/video.service';
 
 import * as $ from 'jquery';
 
@@ -59,7 +60,8 @@ export function createTranslateLoader(http: HttpClient) {
     providers: [
         AuthService,
         AuthGuard,
-        ApiService
+        ApiService,
+        VideoService
     ],
     bootstrap: [AppComponent]
 })
