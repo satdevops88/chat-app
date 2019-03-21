@@ -3,6 +3,8 @@ import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import '../../assets/js/meeting.js';
+import { Socket } from 'ngx-socket-io';
+import { meeting } from "../../assets/js/meeting";
 
 @Component({
   selector: 'video-accept',
@@ -20,19 +22,38 @@ export class VideoAcceptComponent implements OnInit {
 
   constructor(private router: Router,
     private route: ActivatedRoute,
-    private toastr: ToastrService) {
+    private toastr: ToastrService,private socket: Socket) {
   }
 
   ngOnInit() {
     this.roomName = this.route.snapshot.params.room_name;
-    let meeting = new Meeting();
-    meeting.onaddstream = function (e) {
-      this.localVideo.appendChild(e.video);
+
+
+
+    meeting.setSocket(this.socket);
+
+
+    meeting.onaddstream = (e) => {
+      if(e.type == "local") { 
+        this.localVideo.nativeElement.appendChild(e.video);
+      } 
+      else if(e.type == "remote")
+      {
+        this.remoteVideo.nativeElement.appendChild(e.video);
+      } else {
+
+      }
     };
-    meeting.openSignalingChannel = function (callback) {
+    meeting.openSignalingChannel = (callback) => {
       return this.socket.on('message', callback);
     };
-    meeting.check(this.roomName);
+
+    
+    setTimeout( () => {
+      meeting.check(this.roomName);
+    }, 2000);
+    
+
     console.log(this.roomName);
     // this.connect();
   }

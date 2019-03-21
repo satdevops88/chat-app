@@ -3,11 +3,11 @@ import { Component, OnInit, ViewChild, ElementRef, Renderer2 } from '@angular/co
 import { Router, ActivatedRoute } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { VideoService } from './video.service';
-import '../../assets/js/meeting.js';
 import { Socket } from 'ngx-socket-io';
+import { meeting } from "../../assets/js/meeting";
 
 @Component({
-  selector: 'video',
+  selector: 'stream',
   templateUrl: './video.component.html',
   styleUrls: ['./video.component.scss']
 })
@@ -22,15 +22,26 @@ export class VideoComponent implements OnInit {
 
   constructor(private router: Router,
     private route: ActivatedRoute,
-    private toastr: ToastrService,
-    private videoService: VideoService, private socket: Socket, private renderer:Renderer2) {
+    private toastr: ToastrService,private socket: Socket) {
   }
   ngOnInit() {
     this.roomName = this.route.snapshot.params.room_name;
-    let meeting = new Meeting(this.socket);
+
+    meeting.setSocket(this.socket);
+
 
     meeting.onaddstream = (e) => {
-      this.localVideo.nativeElement.appendChild(e.video);
+
+      if(e.type == "local") { 
+        this.localVideo.nativeElement.appendChild(e.video);
+      } 
+      else if(e.type == "remote")
+      {
+        this.remoteVideo.nativeElement.appendChild(e.video);
+      } else {
+
+      }
+      
     };
     meeting.openSignalingChannel = (callback) => {
       return this.socket.on('message', callback);
@@ -42,29 +53,6 @@ export class VideoComponent implements OnInit {
     console.log(this.roomName);
     // this.connect();
   }
-  log(message) {
-    console.log(message);
-    this.message = message;
-  }
-  connect(): void {
-    let date = Date.now();
-    this.username = 'manager';
-    this.videoService.getToken(this.username).subscribe(d => {
-      this.accessToken = d['token'];
-      console.log(this.accessToken);
 
-      localStorage.setItem('token', JSON.stringify({
-        token: this.accessToken,
-        created_at: date
-      }));
-      console.log('room_name:' + this.roomName)
-      this.videoService.connectToRoom(this.accessToken, { name: this.roomName, audio: true, video: { width: 420 } })
-    },
-      error => this.log(JSON.stringify(error)));
-  }
-
-  onCancel() {
-    this.router.navigate(['customers']);
-  }
 
 }

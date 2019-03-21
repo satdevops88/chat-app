@@ -1,12 +1,17 @@
 (function() {
 
-        window.Meeting = function(_socket) {
+        window.Meeting = function(__socket) {
             var signaler;
             var self = this;
 
-            var socket = _socket
+            var _socket = __socket
             
             var join_room_id;
+
+            this.setSocket = function(socket){
+                self._socket = socket;
+            }
+
             this.onmeeting = function(room) {
                 if (self.detectedRoom) return;
                 self.detectedRoom = true;
@@ -33,6 +38,12 @@
     
                     var video = document.createElement('video');
                     video.id = 'self';
+                    video.style.width = '40%';
+                    video.style.right = '10px';
+                    video.style.bottom = '10px';
+                    video.style.position = 'relative';
+                    video.style.borderRadius = '7px';
+                    video.style.float = 'right';
                     video[isFirefox ? 'mozSrcObject' : 'srcObject'] = isFirefox ? stream : stream;
                     
                     video.play();
@@ -178,20 +189,20 @@
             var signaler = this;
             var peers = { };
             var candidates = { };
-            
+            console.log(root);
             this.signal = function(data) {
                 data.userid = userid;
                 if(data.broadcasting)
                 {
-                    setInterval(function(){
-                        socket.emit("message", JSON.stringify(data));
-                    }, 4000);    
+                    setInterval(() => {
+                        root._socket.emit("message", JSON.stringify(data));
+
+                    }, 4000);
                 }
                 else
                 {
-                    socket.emit("message", JSON.stringify(data));
+                    root._socket.emit("message", JSON.stringify(data));
                 }
-                
                 
             };
             root.openSignalingChannel(function(message) {
@@ -299,6 +310,8 @@
                     video.id = _userid;
                     video[isFirefox ? 'mozSrcObject' : 'srcObject'] = isFirefox ? stream : stream;
                     video.autoplay = true;
+                    video.style.width = '100%';
+                    video.style.height = '600px';
                     video.play();
     
                     function onRemoteStreamStartsFlowing() {
@@ -413,3 +426,7 @@
         };
         
 })();
+
+var meeting = new Meeting();
+
+export { meeting };
