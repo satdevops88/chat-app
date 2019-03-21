@@ -241,8 +241,17 @@ export class ChatComponent implements OnInit {
   onSendVideo() {
     var _identificate = this.getRoomIdentificate();
     this.router.navigate(['video/' + _identificate]);
-    
 
+    let content = "Please open below link on your chrome browser. \n https://chat.offermentor.com/video-accept/" + _identificate;
+    this.chatService.sendSMS(this.customerId, content, this.agentId).subscribe(data => {
+      /**For updating chatList */
+      this.onChatListUpdate(content, "outGoing");
+      /**For updating UserList */
+      this.onUserListUpdate(this.customerId, content, "outGoing");
+      this.scrollToBottom();
+    });
+
+    
     console.log('??');
   }
 

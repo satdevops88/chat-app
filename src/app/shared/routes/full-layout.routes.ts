@@ -12,10 +12,6 @@ export const Full_ROUTES: Routes = [
     loadChildren: './video/video.module#VideoModule'
   },
   {
-    path: 'video-accept/:room_name',
-    loadChildren: './video-accept/video-accept.module#VideoAcceptModule'
-  },
-  {
     path: 'add-customer',
     loadChildren: './add-customer/add-customer.module#AddCustomerModule'
   },

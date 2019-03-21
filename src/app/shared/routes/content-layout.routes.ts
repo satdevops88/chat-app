@@ -8,6 +8,10 @@ export const CONTENT_ROUTES: Routes = [
         loadChildren: './login/login.module#LoginModule'
     },
     {
+      path: 'video-accept/:room_name',
+      loadChildren: './video-accept/video-accept.module#VideoAcceptModule'
+    },
+    {
       path: 'not-found',
       loadChildren: './notfound/notfound.module#NotFoundModule'
     },

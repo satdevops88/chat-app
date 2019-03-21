@@ -24,8 +24,7 @@ import { VideoService } from './video/video.service';
 import * as $ from 'jquery';
 
 import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
-const config: SocketIoConfig = { url: 'http://chat.offermentor.com:3000', options: {} };
-
+const config: SocketIoConfig = { url: 'https://chat.offermentor.com:8443', options: {secure: true} };
 
 export function createTranslateLoader(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
