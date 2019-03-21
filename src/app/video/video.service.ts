@@ -32,7 +32,9 @@ export class VideoService {
     }
 
     connectToRoom(accessToken: string, options): void {
+        console.log(options);
         connect(accessToken, options).then(room => {
+            console.log(room);
             this.roomObj = room;
             if (!this.previewing && options['video']) {
                 this.startLocalVideo();
@@ -47,13 +49,11 @@ export class VideoService {
 
                 this.detachParticipantTracks(participant);
             });
-
             room.on('participantConnected', (participant) => {
                 participant.tracks.forEach(track => {
                     this.remoteVideo.nativeElement.appendChild(track.attach());
                 });
             });
-
             // When a Participant adds a Track, attach it to the DOM.
             room.on('trackAdded', (track, participant) => {
                 console.log(participant.identity + " added track: " + track.kind);

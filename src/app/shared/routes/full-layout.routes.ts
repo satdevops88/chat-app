@@ -8,7 +8,7 @@ export const Full_ROUTES: Routes = [
     loadChildren: './chat/chat.module#ChatModule'
   },
   {
-    path: 'video',
+    path: 'video/:room_name',
     loadChildren: './video/video.module#VideoModule'
   },
   {
