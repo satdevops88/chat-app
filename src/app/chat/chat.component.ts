@@ -1,9 +1,9 @@
 import { Component, ViewChild, ElementRef, OnInit, ChangeDetectionStrategy, AfterViewChecked } from '@angular/core';
 import { ChatService } from './chat.service';
 import { Chat } from './chat.model';
-
 import { from } from 'rxjs/observable/from';
 import { groupBy, mergeMap, toArray } from 'rxjs/operators';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-chat',
@@ -28,7 +28,7 @@ export class ChatComponent implements OnInit {
   @ViewChild('scrollMe') myScrollContainer: ElementRef;
 
   item: number = 0;
-  constructor(private elRef: ElementRef, private chatService: ChatService) {
+  constructor(private elRef: ElementRef, private chatService: ChatService, private router: Router) {
     console.log('constructor');
     this.agentId = localStorage.getItem('agentId');
     this.agentName = localStorage.getItem('agentName');
@@ -234,6 +234,16 @@ export class ChatComponent implements OnInit {
     }
     this.messageInputRef.nativeElement.value = "";
     this.messageInputRef.nativeElement.focus();
+  }
+  getRoomIdentificate() {
+    return (Math.random() * new Date().getTime()).toString(36).replace( /\./g , '');
+  }
+  onSendVideo() {
+    var _identificate = this.getRoomIdentificate();
+    this.router.navigate(['video/' + _identificate]);
+    
+
+    console.log('??');
   }
 
   //chat user list click event function

@@ -1,15 +1,17 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, Renderer2 } from '@angular/core';
 
 import { Router, ActivatedRoute } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { VideoService } from './video.service';
+import '../../assets/js/meeting.js';
+import { Socket } from 'ngx-socket-io';
 
 @Component({
   selector: 'video',
   templateUrl: './video.component.html',
   styleUrls: ['./video.component.scss']
 })
-export class VideoComponent {
+export class VideoComponent implements OnInit {
 
   message: string;
   accessToken: string;
@@ -21,21 +23,27 @@ export class VideoComponent {
   constructor(private router: Router,
     private route: ActivatedRoute,
     private toastr: ToastrService,
-    private videoService: VideoService) {
+    private videoService: VideoService, private socket: Socket, private renderer:Renderer2) {
   }
-
   ngOnInit() {
-    this.videoService.localVideo = this.localVideo;
-    this.videoService.remoteVideo = this.remoteVideo;
-
     this.roomName = this.route.snapshot.params.room_name;
+    let meeting = new Meeting(this.socket);
 
-    setTimeout(() => {
-      this.connect();
-    }, 2000);
+    meeting.onaddstream = (e) => {
+      this.localVideo.nativeElement.appendChild(e.video);
+    };
+    meeting.openSignalingChannel = (callback) => {
+      return this.socket.on('message', callback);
+    };
 
+    
+    meeting.setup(this.roomName);
+
+    console.log(this.roomName);
+    // this.connect();
   }
   log(message) {
+    console.log(message);
     this.message = message;
   }
   connect(): void {
@@ -50,7 +58,7 @@ export class VideoComponent {
         created_at: date
       }));
       console.log('room_name:' + this.roomName)
-      this.videoService.connectToRoom(this.accessToken, { name: this.roomName, audio: true, video: { width: 240 } })
+      this.videoService.connectToRoom(this.accessToken, { name: this.roomName, audio: true, video: { width: 420 } })
     },
       error => this.log(JSON.stringify(error)));
   }

@@ -30,7 +30,8 @@
                   <i class="ft-check primary font-small-2"></i> {{userlist.lastmessage}}
                   <span class="float-right 
                         primary">
-                    <span class="badge badge-pill badge-primary" *ngIf="userlist.unreadnum != 0">{{userlist.unreadnum}}</span>
+                    <span class="badge badge-pill badge-primary"
+                      *ngIf="userlist.unreadnum != 0">{{userlist.unreadnum}}</span>
                   </span>
                 </p>
               </div>
@@ -47,7 +48,8 @@
       <div class="media-body text-left">
         <img [src]="[activeChatUserImg]" width="37" class="rounded-circle mr-1" alt="" />
         <span>{{ activeChatUser }}</span>
-        <i class="ft-more-vertical float-right mt-1"></i>
+        <button type="button" class="btn btn-raised btn-primary" style="float:right;" (click)="onSendVideo()">
+          <i class="fa fa-camera hidden-lg-up"></i> Video</button>
       </div>
     </div>
   </div>
@@ -56,8 +58,10 @@
     <div class="chats">
       <div class="chats">
         <div [ngClass]="[chat.chatClass]" *ngFor="let chat of chat">
-          <p class="time" *ngIf="chat.time!='' && chat.avatar=='left' " style="margin: 5px 0; text-align:left; padding-left:10%">{{chat.time}}</p>
-          <p class="time" *ngIf="chat.time!='' && chat.avatar=='right' " style="margin: 5px 0; text-align:right; padding-right:10%">{{chat.time}}</p>
+          <p class="time" *ngIf="chat.time!='' && chat.avatar=='left' "
+            style="margin: 5px 0; text-align:left; padding-left:10%">{{chat.time}}</p>
+          <p class="time" *ngIf="chat.time!='' && chat.avatar=='right' "
+            style="margin: 5px 0; text-align:right; padding-right:10%">{{chat.time}}</p>
           <div class="chat-avatar">
             <a class="avatar" data-toggle="tooltip" data-placement="[chat.avatar]" title="" data-original-title="">
               <img [src]="[chat.imagePath]" class="width-50" alt="avatar" />
@@ -101,3 +105,4 @@
     </form>
   </section>
 </div>
+
