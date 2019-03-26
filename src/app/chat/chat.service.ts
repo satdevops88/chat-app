@@ -43,7 +43,10 @@ export class ChatService {
         this.actionUrl = this.apiBaseUrl + 'sms';
         return this.http.post<T>(this.actionUrl, {"recipient": customerId, "message": content, "agentId": agentId});
     }
-
+    public storeVideoSession<T>(customerId: string, agentId: string, meetingId: string): Observable<T> {
+        this.actionUrl = this.apiBaseUrl + 'saveVideoSession';
+        return this.http.post<T>(this.actionUrl, {"customerId": customerId, "agentId": agentId, "meetingId": meetingId});
+    }
     public getMessages = () => {
         return Observable.create((observer) => {
             this.socket.on('new_SMS', (message) => {
