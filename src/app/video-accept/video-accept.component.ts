@@ -27,11 +27,7 @@ export class VideoAcceptComponent implements OnInit {
 
   ngOnInit() {
     this.roomName = this.route.snapshot.params.room_name;
-
-
-
     meeting.setSocket(this.socket);
-
 
     meeting.onaddstream = (e) => {
       if(e.type == "local") { 

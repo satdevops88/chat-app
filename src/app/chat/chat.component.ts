@@ -235,14 +235,8 @@ export class ChatComponent implements OnInit {
     this.messageInputRef.nativeElement.value = "";
     this.messageInputRef.nativeElement.focus();
   }
-  getRoomIdentificate() {
-    return (Math.random() * new Date().getTime()).toString(36).replace( /\./g , '');
-  }
   onSendVideo() {
-    var _identificate = this.getRoomIdentificate();
-    this.router.navigate(['video/' + _identificate]);
-
-    let content = "Please open below link on your chrome browser. \n https://chat.offermentor.com/video-accept/" + _identificate;
+    const content = 'Please Open below link. \n https://chat.offermentor.com:3000/video/' + this.customerId + '. \n And Click Join Video Chat Button';
     this.chatService.sendSMS(this.customerId, content, this.agentId).subscribe(data => {
       /**For updating chatList */
       this.onChatListUpdate(content, "outGoing");
@@ -250,11 +244,9 @@ export class ChatComponent implements OnInit {
       this.onUserListUpdate(this.customerId, content, "outGoing");
       this.scrollToBottom();
     });
-
-    
-    console.log('??');
+    const videoUrl = 'https://chat.offermentor.com:3000/video/' + this.customerId;
+    window.open(videoUrl ,'_blank')
   }
-
   //chat user list click event function
   SetActive(event, chatId: string) {
     this.customerId = chatId;
