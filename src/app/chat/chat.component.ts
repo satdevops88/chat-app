@@ -38,10 +38,6 @@ export class ChatComponent implements OnInit {
     console.log('ngOnInit');
     this.onUserList();
     this.chatService.getMessages().subscribe(data => {
-      console.log(data);
-      console.log(this.customerId);
-      console.log(this.userLists);
-      console.log(this.chat);
       /**For updating userLists */
       if (data.agentId == this.agentId) {
         this.onUserListUpdate(data.number, data.content, "inComing");
@@ -157,7 +153,7 @@ export class ChatComponent implements OnInit {
 
   private onChatList(chatId: string) {
     this.messages = [];
-    console.log('this.agentId => ' + this.agentId);
+    console.log('chatId => ' + chatId);
     this.chatService.getUserMessages(chatId, this.agentId).subscribe(data => {
 
       const messageArray = data['result'];

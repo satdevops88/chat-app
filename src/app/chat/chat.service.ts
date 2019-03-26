@@ -55,8 +55,6 @@ export class ChatService {
             });
         });
     }
-
-
     // public chat1: Chat[] = [
     //     new Chat(
     //         'right',
